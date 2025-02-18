@@ -1,6 +1,5 @@
 package com.example.webshopbackend.models;
 
-import com.example.webshopbackend.models.keys.CartItemKey;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,13 +18,14 @@ public class CartItems {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "itemId", nullable = false)
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
     @Column(name = "quantity", columnDefinition = "int default 1")
+    @Builder.Default()
     private Integer quantity = 1;
 }

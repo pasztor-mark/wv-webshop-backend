@@ -20,8 +20,8 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "admin", nullable = false)
-    private Boolean admin;
+    @Column(name = "admin")
+    private Boolean admin = false;
 
     @Column(name = "password", nullable = false)
     private String password;
