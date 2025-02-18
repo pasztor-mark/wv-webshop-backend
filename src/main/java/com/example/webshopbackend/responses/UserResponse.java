@@ -13,7 +13,6 @@ public class UserResponse {
     private String name;
     private String email;
     private Boolean admin;
-    private String password;
 
     public UserResponse(User user) {
         this.id = user.getId();

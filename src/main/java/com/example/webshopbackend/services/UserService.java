@@ -41,7 +41,7 @@ public class UserService {
 
         user = userRepository.save(user);
 
-        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAdmin(), user.getPassword());
+        return new UserResponse(user);
     }
     public UserResponse updateUser(Long id, EditUser editUser) {
         Optional<User> optUser = userRepository.findById(id);
@@ -60,10 +60,15 @@ public class UserService {
         }
 
         user = userRepository.save(user);
-        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAdmin(), user.getPassword());
+        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAdmin());
 
     }
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+    public boolean isUserAlreadyRegistered(String email) {
+        Optional<User> user = userRepository.getUserByEmail(email);
+        return user.isEmpty();
+    }
+
 }
