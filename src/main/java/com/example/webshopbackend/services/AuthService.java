@@ -15,11 +15,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
     private final UserRepository userRepository;
-    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    private void assignTokenToCookie(HttpServletResponse response, Long id) {
+    public void assignTokenToCookie(HttpServletResponse response, Long id) {
         String token = jwtUtil.generateToken(id);
         Cookie jwtCookie = new Cookie("jwt", token);
         jwtCookie.setHttpOnly(true);
@@ -55,4 +54,5 @@ public class AuthService {
         assignTokenToCookie(response, matchingUser.getId());
         return "User logged in successfully";
     }
+
 }

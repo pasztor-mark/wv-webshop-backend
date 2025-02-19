@@ -5,10 +5,14 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import java.util.function.Function;
 @Component
 public class JwtUtil {
@@ -17,6 +21,16 @@ public class JwtUtil {
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET));
 
+    }
+    public Optional<String> getJwtFromCookies(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return Optional.empty();
+
+        }
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> "jwt".equals(cookie.getName()))
+                .map(Cookie::getValue)
+                .findFirst();
     }
     public String generateToken(Long userId) {
         return Jwts.builder()

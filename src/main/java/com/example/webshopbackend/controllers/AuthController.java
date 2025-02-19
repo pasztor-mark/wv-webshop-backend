@@ -3,25 +3,22 @@ package com.example.webshopbackend.controllers;
 import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.Login;
-import com.example.webshopbackend.repositories.UserRepository;
 import com.example.webshopbackend.services.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
-
+@RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
-    public AuthController(AuthService authService, UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
-        this.authService = authService;
-    }
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
@@ -39,6 +36,14 @@ public class AuthController {
             return ResponseEntity.badRequest().body(res);
         }
         return ResponseEntity.ok().body(res);
+    }
+    @GetMapping("/validity")
+    public ResponseEntity<Boolean> validity(HttpServletRequest request) {
+        Optional<String> token = jwtUtil.getJwtFromCookies(request);
+        if (token.isPresent()) {
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
 
