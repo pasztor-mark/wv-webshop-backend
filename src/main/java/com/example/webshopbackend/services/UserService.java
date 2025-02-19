@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -29,8 +30,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
     public List<User> findAll() {
-        List<User> users = userRepository.findAll();
-        return users;
+        return userRepository.findAll();
+
     }
     public Optional<User> findUserById(Long id) {
         Optional<User> optUser = userRepository.findById(id);
@@ -71,10 +72,6 @@ public class UserService implements UserDetailsService {
     }
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
-    }
-    public boolean isUserAlreadyRegistered(String email) {
-        Optional<User> user = userRepository.getUserByEmail(email);
-        return user.isEmpty();
     }
 
 }
