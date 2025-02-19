@@ -7,20 +7,26 @@ import com.example.webshopbackend.repositories.UserRepository;
 import com.example.webshopbackend.responses.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+    @Override
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
     public List<User> findAll() {
         List<User> users = userRepository.findAll();
@@ -35,7 +41,7 @@ public class UserService {
     }
     public UserResponse createUser(CreateUser newUser) {
         User user = new User();
-        user.setName(newUser.getName());
+        user.setUsername(newUser.getName());
         user.setPassword(newUser.getPassword());
         user.setEmail(newUser.getEmail());
 
@@ -50,7 +56,7 @@ public class UserService {
         }
         User user = optUser.get();
         if (editUser.getName() != null) {
-            user.setName(editUser.getName());
+            user.setUsername(editUser.getName());
         }
         if (editUser.getPassword() != null) {
             user.setPassword(editUser.getPassword());
@@ -60,7 +66,7 @@ public class UserService {
         }
 
         user = userRepository.save(user);
-        return new UserResponse(user.getId(), user.getName(), user.getEmail(), user.getAdmin());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getAdmin());
 
     }
     public void deleteUser(Long id) {
