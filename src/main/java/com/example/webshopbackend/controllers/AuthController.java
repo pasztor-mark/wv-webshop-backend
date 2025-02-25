@@ -23,7 +23,6 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
         String res = authService.register(createUser, response);
-
         if (res.equals("User already exists")) {
             return ResponseEntity.badRequest().body(res);
         }

@@ -1,10 +1,12 @@
 package com.example.webshopbackend.services;
 
+import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.EditUser;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.UserRepository;
 import com.example.webshopbackend.responses.UserResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,19 +22,24 @@ import java.util.Optional;
 
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final JwtUtil jwtUtil;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
     }
+
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+
     public List<User> findAll() {
         return userRepository.findAll();
 
     }
+
     public Optional<User> findUserById(Long id) {
         Optional<User> optUser = userRepository.findById(id);
         if (optUser.isPresent()) {
@@ -40,6 +47,7 @@ public class UserService implements UserDetailsService {
         }
         throw new HttpServerErrorException(HttpStatusCode.valueOf(404), "Not found");
     }
+
     public UserResponse createUser(CreateUser newUser) {
         User user = new User();
         user.setUsername(newUser.getName());
@@ -50,6 +58,7 @@ public class UserService implements UserDetailsService {
 
         return new UserResponse(user);
     }
+
     public UserResponse updateUser(Long id, EditUser editUser) {
         Optional<User> optUser = userRepository.findById(id);
         if (optUser.isEmpty()) {
@@ -70,8 +79,19 @@ public class UserService implements UserDetailsService {
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getAdmin());
 
     }
+
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
 
+    public UserResponse getSelf(HttpServletRequest request)  {
+        Optional<String> token = jwtUtil.getJwtFromCookies(request);
+        if (token.isPresent()) {
+        Optional<User> user = userRepository.findById(jwtUtil.extractUserId(token.get()));
+        if (user.isPresent()) {
+            return new UserResponse(user.get());
+        }
+        }
+        throw new HttpServerErrorException(HttpStatusCode.valueOf(404), "Not found");
+    }
 }

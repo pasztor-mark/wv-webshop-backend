@@ -11,7 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 
 public class CartItem {
-    private String name;
     private Integer quantity;
     private Long userId;
     private Long itemId;

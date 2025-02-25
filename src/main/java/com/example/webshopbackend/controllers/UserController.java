@@ -5,7 +5,7 @@ import com.example.webshopbackend.dtos.User.EditUser;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.responses.UserResponse;
 import com.example.webshopbackend.services.UserService;
-import org.apache.coyote.Response;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,5 +46,10 @@ public class UserController {
     @DeleteMapping("user/{id}")
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
+    }
+    @GetMapping("self")
+    public ResponseEntity<UserResponse> getSelf(HttpServletRequest request) {
+        UserResponse  userResponse = userService.getSelf(request);
+        return ResponseEntity.ok(userResponse);
     }
 }
