@@ -5,7 +5,6 @@ import com.example.webshopbackend.services.CartService;
 import com.example.webshopbackend.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +18,6 @@ import org.springframework.web.client.HttpServerErrorException;
 public class CartController {
     private final CartService cartService;
     private final UserService userService;
-    @Autowired
 
     @GetMapping("own")
     public CartResponse getOwnCart(HttpServletRequest request) {

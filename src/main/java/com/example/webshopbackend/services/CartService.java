@@ -27,6 +27,6 @@ public class CartService {
         if (!jwtUtil.validateToken(token.get(), id)) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
         }
-        return new CartResponse(cartRepository.findAllByUserId(id));
+        return new CartResponse(cartRepository.findAllByUser_Id((id)));
     }
 }

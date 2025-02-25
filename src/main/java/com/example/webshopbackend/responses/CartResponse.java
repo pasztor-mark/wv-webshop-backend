@@ -1,6 +1,6 @@
 package com.example.webshopbackend.responses;
 
-import com.example.webshopbackend.dtos.CartItem.CartItem;
+import com.example.webshopbackend.models.CartItems;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,9 +9,9 @@ import java.util.List;
 @Data
 @Builder
 public class CartResponse {
-    private List<CartItem> cart;
+    private List<CartItems> cart;
 
-    public CartResponse(List<CartItem> cart) {
+    public CartResponse(List<CartItems> cart) {
         this.cart = cart;
     }
 }

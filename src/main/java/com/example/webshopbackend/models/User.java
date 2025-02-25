@@ -38,6 +38,9 @@ public class User implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "user")
+    private List<CartItems> cartItems;
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
