@@ -3,7 +3,9 @@ package com.example.webshopbackend.controllers;
 import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.Login;
+import com.example.webshopbackend.responses.UserResponse;
 import com.example.webshopbackend.services.AuthService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,19 +23,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
-        String res = authService.register(createUser, response);
-        if (res.equals("User already exists")) {
-            return ResponseEntity.badRequest().body(res);
-        }
-        return ResponseEntity.ok().body(null);
+    public ResponseEntity<UserResponse> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
+        UserResponse res = authService.register(createUser, response);
+        return ResponseEntity.ok().body(res);
     }
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Login login, HttpServletResponse response) {
-        String res = authService.login(login, response);
-        if (res.equals("Check your credentials")) {
-            return ResponseEntity.badRequest().body(res);
-        }
+    public ResponseEntity<UserResponse> login(@RequestBody Login login, HttpServletResponse response) {
+        UserResponse res = authService.login(login, response);
         return ResponseEntity.ok().body(res);
     }
     @GetMapping("/validity")
@@ -43,6 +39,16 @@ public class AuthController {
             return ResponseEntity.ok(true);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+    @DeleteMapping("/invalidate")
+    public void invalidate(HttpServletResponse response) {
+        Cookie cookie = new Cookie("jwt", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+
+        response.addCookie(cookie);
     }
 
 

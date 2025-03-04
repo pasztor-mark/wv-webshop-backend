@@ -84,12 +84,12 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public UserResponse getSelf(HttpServletRequest request)  {
+    public User getSelf(HttpServletRequest request)  {
         Optional<String> token = jwtUtil.getJwtFromCookies(request);
         if (token.isPresent()) {
         Optional<User> user = userRepository.findById(jwtUtil.extractUserId(token.get()));
         if (user.isPresent()) {
-            return new UserResponse(user.get());
+            return user.get();
         }
         }
         throw new HttpServerErrorException(HttpStatusCode.valueOf(404), "Not found");

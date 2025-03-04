@@ -1,5 +1,6 @@
 package com.example.webshopbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +35,9 @@ public class User implements UserDetails {
     @Column(name = "admin")
     @Builder.Default
     private Boolean admin = false;
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Item> items;
 
     @Column(name = "password", nullable = false)
     private String password;

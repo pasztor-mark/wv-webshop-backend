@@ -1,15 +1,16 @@
 package com.example.webshopbackend.services;
 
+import com.example.webshopbackend.dtos.Item.CreateItem;
 import com.example.webshopbackend.models.Item;
+import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.ItemRepository;
 import com.example.webshopbackend.responses.ItemResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.client.HttpServerErrorException;
 
-import javax.swing.text.html.Option;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,12 +34,20 @@ public class ItemService {
         throw new HttpServerErrorException(HttpStatusCode.valueOf(404));
     }
 
-    public ItemResponse createItem(Item newItem) {
+    public ItemResponse createItem(CreateItem newItem, User user) {
+        Byte[] imageBytes = newItem.getImage();
+        byte[] imageByteArray = new byte[imageBytes.length];
+        for (int i = 0; i < imageBytes.length; i++) {
+            imageByteArray[i] = imageBytes[i];
+        }
+
+        String encoded = Base64.getEncoder().encodeToString(imageByteArray);
         Item item = new Item();
         item.setName(newItem.getName());
         item.setPrice(newItem.getPrice());
         item.setDescription(newItem.getDescription());
-        item.setImage(newItem.getImage());
+        item.setImage(encoded);
+        item.setAuthor(user);
 
         itemRepository.save(item);
         return new ItemResponse(item);

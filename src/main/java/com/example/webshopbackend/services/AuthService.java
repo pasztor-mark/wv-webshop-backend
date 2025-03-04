@@ -5,11 +5,14 @@ import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.Login;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.UserRepository;
+import com.example.webshopbackend.responses.UserResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -29,9 +32,9 @@ public class AuthService {
         response.addCookie(jwtCookie);
     }
 
-    public String register(CreateUser createUser, HttpServletResponse response) {
+    public UserResponse register(CreateUser createUser, HttpServletResponse response) {
         if (userRepository.getUserByEmail(createUser.getEmail()).isPresent()) {
-            return "User already exists";
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(409));
         }
 
         User registeredUser = User.builder()
@@ -42,17 +45,23 @@ public class AuthService {
         userRepository.save(registeredUser);
 
         assignTokenToCookie(response, registeredUser.getId());
-        return "User registered successfully";
+        return UserResponse.builder()
+                .name(registeredUser.getUsername())
+                .email(registeredUser.getEmail())
+                .id(registeredUser.getId())
+                .build();
     }
-    public String login(Login loginData, HttpServletResponse response) {
+
+    public UserResponse login(Login loginData, HttpServletResponse response) {
         User matchingUser = userRepository.getUserByEmail(loginData.getEmail()).orElse(null);
-        if (matchingUser == null ) {
-            return "Check your credentials";
-        }        if (!passwordEncoder.matches(loginData.getPassword(), matchingUser.getPassword())) {
-            return "Check your credentials";
+        if (matchingUser == null) {
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
+        }
+        if (!passwordEncoder.matches(loginData.getPassword(), matchingUser.getPassword())) {
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
         }
         assignTokenToCookie(response, matchingUser.getId());
-        return "User logged in successfully";
+        return UserResponse.builder().email(matchingUser.getEmail()).admin(matchingUser.getAdmin()).id(matchingUser.getId()).name(matchingUser.getUsername()).build();
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.webshopbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,11 @@ public class Item {
     @GeneratedValue
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
+    private User author;
+
     @Column(name = "name", nullable = false)
     private String name;
     @Column(name = "description")
@@ -27,5 +33,5 @@ public class Item {
 
     @Lob
     @Column( columnDefinition = "MEDIUMBLOB", name = "image")
-    private Byte[] image;
+    private String image;
 }

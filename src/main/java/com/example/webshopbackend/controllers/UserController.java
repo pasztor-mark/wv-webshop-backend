@@ -45,8 +45,8 @@ public class UserController {
         userService.deleteUser(id);
     }
     @GetMapping("self")
-    public ResponseEntity<UserResponse> getSelf(HttpServletRequest request) {
-        UserResponse  userResponse = userService.getSelf(request);
-        return ResponseEntity.ok(userResponse);
+    public ResponseEntity<User> getSelf(HttpServletRequest request) {
+        User  user = userService.getSelf(request);
+        return ResponseEntity.ok(user);
     }
 }
