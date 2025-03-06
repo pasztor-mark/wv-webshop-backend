@@ -5,7 +5,7 @@ import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.Login;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.UserRepository;
-import com.example.webshopbackend.responses.UserResponse;
+import com.example.webshopbackend.responses.AuthResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class AuthService {
         response.addCookie(jwtCookie);
     }
 
-    public UserResponse register(CreateUser createUser, HttpServletResponse response) {
+    public AuthResponse register(CreateUser createUser, HttpServletResponse response) {
         if (userRepository.getUserByEmail(createUser.getEmail()).isPresent()) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(409));
         }
@@ -44,15 +44,10 @@ public class AuthService {
                 .build();
         userRepository.save(registeredUser);
 
-        assignTokenToCookie(response, registeredUser.getId());
-        return UserResponse.builder()
-                .name(registeredUser.getUsername())
-                .email(registeredUser.getEmail())
-                .id(registeredUser.getId())
-                .build();
+        return new AuthResponse(jwtUtil.generateToken(registeredUser.getId()));
     }
 
-    public UserResponse login(Login loginData, HttpServletResponse response) {
+    public AuthResponse login(Login loginData, HttpServletResponse response) {
         User matchingUser = userRepository.getUserByEmail(loginData.getEmail()).orElse(null);
         if (matchingUser == null) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
@@ -60,8 +55,7 @@ public class AuthService {
         if (!passwordEncoder.matches(loginData.getPassword(), matchingUser.getPassword())) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
         }
-        assignTokenToCookie(response, matchingUser.getId());
-        return UserResponse.builder().email(matchingUser.getEmail()).admin(matchingUser.getAdmin()).id(matchingUser.getId()).name(matchingUser.getUsername()).build();
+        return new AuthResponse(jwtUtil.generateToken(matchingUser.getId()));
     }
 
 }

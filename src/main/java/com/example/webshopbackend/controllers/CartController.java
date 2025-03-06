@@ -14,17 +14,18 @@ import org.springframework.web.client.HttpServerErrorException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/cart")
+@RequestMapping("/api/cart/")
 public class CartController {
     private final CartService cartService;
     private final UserService userService;
 
     @GetMapping("own")
     public CartResponse getOwnCart(HttpServletRequest request) {
-        return cartService.getCartItems(request);
+        //return cartService.getCartItems(request);
+        throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
     }
     @PostMapping("change")
-    public CartResponse changeCart(HttpServletRequest request)  {
+    public CartResponse changeCart(Long itemId, HttpServletRequest request)  {
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
     }
 }

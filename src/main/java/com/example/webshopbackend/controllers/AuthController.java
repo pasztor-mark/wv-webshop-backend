@@ -3,7 +3,7 @@ package com.example.webshopbackend.controllers;
 import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.Login;
-import com.example.webshopbackend.responses.UserResponse;
+import com.example.webshopbackend.responses.AuthResponse;
 import com.example.webshopbackend.services.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,13 +23,13 @@ public class AuthController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
-        UserResponse res = authService.register(createUser, response);
-        return ResponseEntity.ok().body(res);
+    public ResponseEntity<AuthResponse> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
+        AuthResponse res = authService.register(createUser, response);
+        return ResponseEntity.ok(res);
     }
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody Login login, HttpServletResponse response) {
-        UserResponse res = authService.login(login, response);
+    public ResponseEntity<AuthResponse> login(@RequestBody Login login, HttpServletResponse response) {
+        AuthResponse res = authService.login(login, response);
         return ResponseEntity.ok().body(res);
     }
     @GetMapping("/validity")
