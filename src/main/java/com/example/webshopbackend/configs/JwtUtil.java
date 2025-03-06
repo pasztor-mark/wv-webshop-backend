@@ -7,7 +7,9 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -47,6 +49,13 @@ public class JwtUtil {
     }
     public boolean validateToken(String token, Long userId) {
         return (userId.equals(extractUserId(token)) && !isTokenExpired(token));
+    }
+    public Long getUserIdFromCookie(HttpServletRequest request) {
+        Optional<String> jwtToken = getJwtFromCookies(request);
+        if (jwtToken.isPresent()) {
+        return extractUserId(jwtToken.get());
+        }
+        throw new HttpServerErrorException(HttpStatusCode.valueOf(403));
     }
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         Claims claims = Jwts.parserBuilder()

@@ -40,12 +40,14 @@ public class ItemController {
     public List<Item> getAllItems() {
         return itemService.findAll();
     }
+
     @GetMapping("/feed")
     public Page<ItemResponse> getItems(Pageable pageable) {
         Page<Item> items = itemRepository.findAll(pageable);
         Page<ItemResponse> itemResponses = items.map(ItemResponse::new);
         return itemResponses;
     }
+
     @GetMapping("/item/{id}")
     public Item getItemById(@PathVariable Long id) {
         Optional<Item> item = itemService.findById(id);
@@ -54,20 +56,24 @@ public class ItemController {
         }
         throw new HttpServerErrorException(HttpStatusCode.valueOf(404));
     }
+
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody CreateItem newItem, HttpServletRequest request) {
         User user = userService.getSelf(request);
-       ItemResponse createdItem = itemService.createItem(newItem, user);
-       return ResponseEntity.ok(createdItem);
+        ItemResponse createdItem = itemService.createItem(newItem, user);
+        return ResponseEntity.ok(createdItem);
     }
-    @PutMapping("item/{id}")
-    public ResponseEntity<ItemResponse> updateItem(@PathVariable Long id, @RequestBody Item newItem) {
-        ItemResponse updatedItem = itemService.updateItem(id, newItem);
+
+    @PutMapping("/item/{id}")
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Long id, @RequestBody Item newItem, HttpServletRequest request) {
+        ItemResponse updatedItem = itemService.updateItem(id, newItem, request);
         return ResponseEntity.ok(updatedItem);
     }
-    @DeleteMapping("item/{id}")
-    public void deleteItem(@PathVariable Long id) {
-        itemService.deleteItem(id);
+
+    @DeleteMapping("/item/{id}")
+    public ResponseEntity deleteItem(@PathVariable Long id, HttpServletRequest request) {
+        itemService.deleteItem(id, request);
+        return ResponseEntity.status(HttpStatusCode.valueOf(204)).build();
     }
 
 

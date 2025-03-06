@@ -1,10 +1,12 @@
 package com.example.webshopbackend.services;
 
+import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.Item.CreateItem;
 import com.example.webshopbackend.models.Item;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.ItemRepository;
 import com.example.webshopbackend.responses.ItemResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -17,10 +19,14 @@ import java.util.Optional;
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
+    private final JwtUtil jwtUtil;
+    private final UserService userService;
 
     @Autowired
-    public ItemService(ItemRepository itemRepository) {
+    public ItemService(ItemRepository itemRepository, JwtUtil jwtUtil, UserService userService) {
         this.itemRepository = itemRepository;
+        this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
     public List<Item> findAll() {
@@ -52,12 +58,16 @@ public class ItemService {
         itemRepository.save(item);
         return new ItemResponse(item);
     }
-    public ItemResponse updateItem(Long id, Item newItem) {
+    public ItemResponse updateItem(Long id, Item newItem, HttpServletRequest request) {
+        Long userId = jwtUtil.getUserIdFromCookie(request);
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(404));
         }
         Item update = item.get();
+        if (!update.getAuthor().getId().equals(userId)) {
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(403));
+        }
         if (newItem.getName() != null) {
             update.setName(newItem.getName());
         }
@@ -74,7 +84,15 @@ public class ItemService {
         itemRepository.save(update);
         return new ItemResponse(update);
     }
-    public void deleteItem(Long id) {
+    public void deleteItem(Long id, HttpServletRequest request) {
+        Long userId = jwtUtil.getUserIdFromCookie(request);
+        Optional<Item> item = itemRepository.findById(id);
+        if (item.isEmpty()) {
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(404));
+        }
+        if (!item.get().getAuthor().getId().equals(userId)) {
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(403));
+        }
         itemRepository.deleteById(id);
     }
 
