@@ -6,6 +6,7 @@ import com.example.webshopbackend.repositories.ItemRepository;
 import com.example.webshopbackend.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,13 +14,13 @@ import org.springframework.stereotype.Component;
 public class DataLoader implements CommandLineRunner {
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
-
+    private final PasswordEncoder passwordEncoder;
     @Override
     public void run(String... args) throws Exception {
         userRepository.deleteAll();
         User adminUser = User.builder()
                 .username("admin")
-                .password("Administrator123!")
+                .password(passwordEncoder.encode("Administrator123!"))
                 .email("admin@admin.com")
                 .admin(true)
                 .build();

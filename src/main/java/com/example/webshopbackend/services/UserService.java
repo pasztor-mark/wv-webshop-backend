@@ -85,7 +85,8 @@ public class UserService implements UserDetailsService {
     }
 
     public User getSelf(HttpServletRequest request)  {
-        Optional<String> token = jwtUtil.getJwtFromCookies(request);
+        Optional<String> token = jwtUtil.getJwtFromAuth(request);
+        System.out.println(token);
         if (token.isPresent()) {
         Optional<User> user = userRepository.findById(jwtUtil.extractUserId(token.get()));
         if (user.isPresent()) {

@@ -43,7 +43,13 @@ public class AuthService {
                 .email(createUser.getEmail())
                 .build();
         userRepository.save(registeredUser);
+        Cookie jwtCookie = new Cookie("jwt", jwtUtil.generateToken(registeredUser.getId()));
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(false);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(3600 * 8);
 
+        response.addCookie(jwtCookie);
         return new AuthResponse(jwtUtil.generateToken(registeredUser.getId()));
     }
 
@@ -55,6 +61,13 @@ public class AuthService {
         if (!passwordEncoder.matches(loginData.getPassword(), matchingUser.getPassword())) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
         }
+        Cookie jwtCookie = new Cookie("jwt", jwtUtil.generateToken(matchingUser.getId()));
+        jwtCookie.setHttpOnly(true);
+        jwtCookie.setSecure(false);
+        jwtCookie.setPath("/");
+        jwtCookie.setMaxAge(3600 * 8);
+
+        response.addCookie(jwtCookie);
         return new AuthResponse(jwtUtil.generateToken(matchingUser.getId()));
     }
 

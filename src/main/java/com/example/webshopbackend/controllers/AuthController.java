@@ -25,6 +25,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody CreateUser createUser, HttpServletResponse response) {
         AuthResponse res = authService.register(createUser, response);
+
         return ResponseEntity.ok(res);
     }
     @PostMapping("/login")
@@ -34,7 +35,7 @@ public class AuthController {
     }
     @GetMapping("/validity")
     public ResponseEntity<Boolean> validity(HttpServletRequest request) {
-        Optional<String> token = jwtUtil.getJwtFromCookies(request);
+        Optional<String> token = jwtUtil.getJwtFromAuth(request);
         if (token.isPresent()) {
             return ResponseEntity.ok(true);
         }
