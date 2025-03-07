@@ -85,14 +85,6 @@ public class UserService implements UserDetailsService {
     }
 
     public User getSelf(HttpServletRequest request)  {
-        Optional<String> token = jwtUtil.getJwtFromAuth(request);
-        System.out.println(token);
-        if (token.isPresent()) {
-        Optional<User> user = userRepository.findById(jwtUtil.extractUserId(token.get()));
-        if (user.isPresent()) {
-            return user.get();
-        }
-        }
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(404), "Not found");
+        return jwtUtil.getSelf(request);
     }
 }

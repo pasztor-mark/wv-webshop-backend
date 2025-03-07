@@ -1,9 +1,14 @@
 package com.example.webshopbackend.services;
 
 import com.example.webshopbackend.configs.JwtUtil;
+import com.example.webshopbackend.dtos.CartItem.CartItem;
 import com.example.webshopbackend.repositories.CartRepository;
+import com.example.webshopbackend.responses.CartResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -11,32 +16,23 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final JwtUtil jwtUtil;
-/*
+
     public CartResponse getCartItems(HttpServletRequest request) {
-        Optional<String> token = jwtUtil.getJwtFromCookies(request);
-        if (token.isEmpty()) {
-            throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
-        }
-        Long id = jwtUtil.extractUserId(token.get());
-        if (!jwtUtil.validateToken(token.get(), id)) {
-            throw new HttpServerErrorException(HttpStatusCode.valueOf(401));
-        }
-        return new CartResponse();
-        return new CartResponse(cartRepository.findAllByUserId(id));
+        Long userId = jwtUtil.getSelf(request).getId();
+        List<CartItem> cartItems = cartRepository.findByUserId(userId);
+        return new CartResponse(cartItems);
     }
     public CartResponse changeCart(HttpServletRequest request, Long itemId) {
-        Long userId = jwtUtil.getUserIdFromCookie(request);
+        Long userId = jwtUtil.getSelf(request).getId();
         CartItem cartItem = new CartItem(1, userId, itemId);
-        List<CartItem> cartItems = cartRepository.findAllByUserId(userId);
+        List<CartItem> cartItems = cartRepository.findByUserId(userId);
         if (cartItems.isEmpty()) {
             cartItems.add(cartItem);
             return new CartResponse(cartItems);
         }
-        if (cartItems.contains(cartItem)) {
-            cartItems.remove(cartItem);
-        }
+        cartItems.remove(cartItem);
         cartItems.add(cartItem);
         return new CartResponse(cartItems);
 
-    }*/
+    }
 }

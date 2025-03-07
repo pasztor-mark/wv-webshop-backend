@@ -27,5 +27,5 @@ public class CartItems {
 
     @Column(name = "quantity", columnDefinition = "int default 1")
     @Builder.Default()
-    private Integer quantity = 1;
+    private int quantity = 1;
 }

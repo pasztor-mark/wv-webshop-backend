@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Entity
 @Builder
@@ -22,6 +24,9 @@ public class Item {
     @JoinColumn(name = "user_id", nullable = false)
     @JsonBackReference
     private User author;
+
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true )
+    private List<CartItems> cartItems;
 
     @Column(name = "name", nullable = false)
     private String name;

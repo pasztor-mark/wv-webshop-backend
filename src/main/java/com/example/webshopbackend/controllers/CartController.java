@@ -21,10 +21,9 @@ public class CartController {
 
     @GetMapping("own")
     public CartResponse getOwnCart(HttpServletRequest request) {
-        //return cartService.getCartItems(request);
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
+        return cartService.getCartItems(request);
     }
-    @PostMapping("change")
+    @PostMapping("addToCart")
     public CartResponse changeCart(Long itemId, HttpServletRequest request)  {
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
     }
