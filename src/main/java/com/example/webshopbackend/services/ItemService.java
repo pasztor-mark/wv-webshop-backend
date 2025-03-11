@@ -6,7 +6,6 @@ import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.ItemRepository;
 import com.example.webshopbackend.responses.ItemResponse;
 import com.example.webshopbackend.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -58,8 +57,8 @@ public class ItemService {
         itemRepository.save(item);
         return new ItemResponse(item);
     }
-    public ItemResponse updateItem(Long id, Item newItem, HttpServletRequest request) {
-        Long userId = jwtUtil.getUserIdFromCookie(request);
+
+    public ItemResponse updateItem(Long id, Item newItem, Long userId) {
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(404));
@@ -84,8 +83,8 @@ public class ItemService {
         itemRepository.save(update);
         return new ItemResponse(update);
     }
-    public void deleteItem(Long id, HttpServletRequest request) {
-        Long userId = jwtUtil.getUserIdFromCookie(request);
+
+    public void deleteItem(Long id, Long userId) {
         Optional<Item> item = itemRepository.findById(id);
         if (item.isEmpty()) {
             throw new HttpServerErrorException(HttpStatusCode.valueOf(404));

@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class CustomExceptionHandler {
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
-        System.out.println("ResponseStatusException buzi");
         ErrorResponse err = new ErrorResponse(
                 ex.getStatusCode().value(),
                 ex.getReason()

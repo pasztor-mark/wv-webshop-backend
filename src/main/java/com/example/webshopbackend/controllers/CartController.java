@@ -2,7 +2,6 @@ package com.example.webshopbackend.controllers;
 
 import com.example.webshopbackend.responses.CartResponse;
 import com.example.webshopbackend.services.CartService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +21,7 @@ public class CartController {
         return cartService.getCartItems();
     }
     @PostMapping("addToCart")
-    public CartResponse changeCart(Long itemId, HttpServletRequest request)  {
+    public CartResponse changeCart(Long itemId) {
         throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
     }
 }

@@ -8,7 +8,7 @@ import com.example.webshopbackend.responses.ItemResponse;
 import com.example.webshopbackend.services.ItemService;
 import com.example.webshopbackend.services.UserService;
 import com.example.webshopbackend.utils.JwtUtil;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.webshopbackend.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,16 +24,14 @@ import java.util.Optional;
 @RequestMapping("/api/items")
 public class ItemController {
     private final ItemService itemService;
-    private final JwtUtil jwtUtil;
-    private final UserService userService;
     private final ItemRepository itemRepository;
+    private final UserUtils userUtils;
 
     @Autowired
-    public ItemController(ItemService itemService, JwtUtil jwtUtil, UserService userService, ItemRepository itemRepository) {
+    public ItemController(ItemService itemService, JwtUtil jwtUtil, UserService userService, ItemRepository itemRepository, UserUtils userUtils) {
         this.itemService = itemService;
-        this.jwtUtil = jwtUtil;
-        this.userService = userService;
         this.itemRepository = itemRepository;
+        this.userUtils = userUtils;
     }
 
     @GetMapping("/all")
@@ -59,20 +57,23 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<ItemResponse> createItem(@RequestBody CreateItem newItem) {
-        User user = userService.getSelf();
+        User user = userUtils.getCurrentUser();
         ItemResponse createdItem = itemService.createItem(newItem, user);
         return ResponseEntity.ok(createdItem);
     }
 
     @PutMapping("/item/{id}")
-    public ResponseEntity<ItemResponse> updateItem(@PathVariable Long id, @RequestBody Item newItem, HttpServletRequest request) {
-        ItemResponse updatedItem = itemService.updateItem(id, newItem, request);
+    public ResponseEntity<ItemResponse> updateItem(@PathVariable Long id, @RequestBody Item newItem) {
+        User user = userUtils.getCurrentUser();
+        ItemResponse updatedItem = itemService.updateItem(id, newItem, user.getId());
         return ResponseEntity.ok(updatedItem);
     }
 
     @DeleteMapping("/item/{id}")
-    public ResponseEntity deleteItem(@PathVariable Long id, HttpServletRequest request) {
-        itemService.deleteItem(id, request);
+    public ResponseEntity deleteItem(@PathVariable Long id) {
+        User user = userUtils.getCurrentUser();
+
+        itemService.deleteItem(id, user.getId());
         return ResponseEntity.status(HttpStatusCode.valueOf(204)).build();
     }
 
