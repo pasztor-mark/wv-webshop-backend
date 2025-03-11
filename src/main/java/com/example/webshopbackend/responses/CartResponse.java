@@ -1,6 +1,6 @@
 package com.example.webshopbackend.responses;
 
-import com.example.webshopbackend.dtos.CartItem.CartItem;
+import com.example.webshopbackend.models.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,11 +14,12 @@ import java.util.List;
 @Builder
 public class CartResponse {
     private int itemCount;
-    private List<CartItem> cart;
+    private List<ItemResponse> cart;
 
-    public CartResponse(List<CartItem> cartItems) {
-        this.itemCount = cartItems.size();
-        this.cart = cartItems;
+    public CartResponse(List<Item> cart) {
+        this.itemCount = cart.size();
+        this.cart = (cart.stream().map(ItemResponse::new)).toList();
     }
+
 
 }
