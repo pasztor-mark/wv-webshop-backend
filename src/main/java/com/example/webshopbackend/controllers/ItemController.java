@@ -1,6 +1,5 @@
 package com.example.webshopbackend.controllers;
 
-import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.Item.CreateItem;
 import com.example.webshopbackend.models.Item;
 import com.example.webshopbackend.models.User;
@@ -8,6 +7,7 @@ import com.example.webshopbackend.repositories.ItemRepository;
 import com.example.webshopbackend.responses.ItemResponse;
 import com.example.webshopbackend.services.ItemService;
 import com.example.webshopbackend.services.UserService;
+import com.example.webshopbackend.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,8 +58,8 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemResponse> createItem(@RequestBody CreateItem newItem, HttpServletRequest request) {
-        User user = userService.getSelf(request);
+    public ResponseEntity<ItemResponse> createItem(@RequestBody CreateItem newItem) {
+        User user = userService.getSelf();
         ItemResponse createdItem = itemService.createItem(newItem, user);
         return ResponseEntity.ok(createdItem);
     }

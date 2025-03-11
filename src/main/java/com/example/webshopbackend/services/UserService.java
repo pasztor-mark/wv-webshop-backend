@@ -1,19 +1,20 @@
 package com.example.webshopbackend.services;
 
-import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.EditUser;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.UserRepository;
 import com.example.webshopbackend.responses.UserResponse;
-import jakarta.servlet.http.HttpServletRequest;
+import com.example.webshopbackend.utils.JwtUtil;
+import com.example.webshopbackend.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,16 +24,22 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final UserUtils userUtils;
 
     @Autowired
-    public UserService(UserRepository userRepository, JwtUtil jwtUtil) {
+    public UserService(UserRepository userRepository, JwtUtil jwtUtil, UserUtils userUtils) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
+        this.userUtils = userUtils;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-        return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public UserDetails loadUserByUsername(String userId) {
+        Optional<User> user = userRepository.findById(Long.parseLong(userId));
+        if (user.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        return userRepository.findById(Long.parseLong(userId)).orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(401), "User not found"));
     }
 
     public List<User> findAll() {
@@ -45,7 +52,7 @@ public class UserService implements UserDetailsService {
         if (optUser.isPresent()) {
             return optUser;
         }
-        throw new HttpServerErrorException(HttpStatusCode.valueOf(404), "Not found");
+        throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Not found");
     }
 
     public UserResponse createUser(CreateUser newUser) {
@@ -84,7 +91,7 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public User getSelf(HttpServletRequest request)  {
-        return jwtUtil.getSelf(request);
+    public User getSelf()   {
+        return userUtils.getCurrentUser();
     }
 }

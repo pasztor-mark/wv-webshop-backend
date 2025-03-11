@@ -5,7 +5,6 @@ import com.example.webshopbackend.dtos.User.EditUser;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.responses.UserResponse;
 import com.example.webshopbackend.services.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +43,10 @@ public class UserController {
     public void deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
     }
+
     @GetMapping("self")
-    public ResponseEntity<User> getSelf(HttpServletRequest request) {
-        User  user = userService.getSelf(request);
+    public ResponseEntity<User> getSelf() {
+        User  user = userService.getSelf();
         return ResponseEntity.ok(user);
     }
 }

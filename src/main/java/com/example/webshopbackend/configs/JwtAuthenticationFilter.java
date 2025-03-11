@@ -1,6 +1,7 @@
 package com.example.webshopbackend.configs;
 
 import com.example.webshopbackend.services.UserService;
+import com.example.webshopbackend.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -39,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        if (token.startsWith("Bearer ") && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (!token.isBlank() && SecurityContextHolder.getContext().getAuthentication() == null) {
                 Long id = jwtUtil.extractUserId(token);
                 if (id != null) {
                     UserDetails user = userService.loadUserByUsername(String.valueOf(id));

@@ -1,11 +1,11 @@
 package com.example.webshopbackend.services;
 
-import com.example.webshopbackend.configs.JwtUtil;
 import com.example.webshopbackend.dtos.User.CreateUser;
 import com.example.webshopbackend.dtos.User.Login;
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.UserRepository;
 import com.example.webshopbackend.responses.AuthResponse;
+import com.example.webshopbackend.utils.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

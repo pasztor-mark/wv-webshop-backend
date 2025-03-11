@@ -1,4 +1,4 @@
-package com.example.webshopbackend.configs;
+package com.example.webshopbackend.utils;
 
 import com.example.webshopbackend.models.User;
 import com.example.webshopbackend.repositories.UserRepository;

@@ -1,6 +1,7 @@
 package com.example.webshopbackend.configs;
 
 import com.example.webshopbackend.services.UserService;
+import com.example.webshopbackend.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
